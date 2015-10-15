@@ -60,7 +60,7 @@ http.createServer(function(request, response) {
   }
   dns.reverse(addr, function (erno, domains) {
     if (erno) resp.domain='REVERSE LOOKUP FAILED'; else {
-      resp.domain=domains;
+      resp.domain=domains[0];
     }
     response.writeHeader(200, {'Content-Type': 'text/plain','Content-Length': JSON.stringify(resp).length });
     response.end(JSON.stringify(resp));

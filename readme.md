@@ -12,6 +12,11 @@ etc.
 Sample test application is provided in 'test.js' which can be run as a node application.
 'node test 123.1.17.1' for instance
 
+The ipInfo.js provides a 'micro service' running in this case at port 8081 which returns geo ip information in json format
+Run as:
+**nohup node ipInfo &**
+**curl 127.0.0.1:8081/geoip?=106.120.78.169**
+{"code":"OK","address":"106.120.78.169","lon":39.9289,"lat":116.3883,"countryAlfa":"CN","countryNum":156,"countryName":"China","city":"Beijing","copyright":"This product includes GeoLite2 data created by MaxMind, available from http://www.maxmind.com","domain":"169.78.120.106.static.bjtelecom.net"}
 
 ## Motivation
 
