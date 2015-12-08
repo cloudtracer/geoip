@@ -30,7 +30,7 @@ var http = require('http'),
 // set DNS to Google
 dns.setServers(["8.8.8.8","8.8.4.4"]);
 http.createServer(function(request, response) {
-  addr = url.parse(request.url).path.replace("/geoip?=","");
+  addr = url.parse(request.url).path.replace("/geoip?","");
   address=addr.split(".");
   ipnum=16777216*parseInt(address[0])+65536*parseInt(address[1])+256*parseInt(address[2])+parseInt(address[3]);
   low=0;
@@ -42,7 +42,8 @@ http.createServer(function(request, response) {
   }else{
     while ((high - low) > 1) {
       i=Math.round((high+low)/2);
-      if (blocks.blocks[i][0] < ipnum) {
+      // console.log(high+' '+low+'  '+ipnum+' '+blocks.blocks[i][0]);
+      if (blocks.blocks[i][0] <= ipnum) {
         low=i;
       } else if (blocks.blocks[i][0] > ipnum) {
          high=i;
