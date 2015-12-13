@@ -60,10 +60,15 @@ http.createServer(function(request, response) {
           high=i;
         }
       }
-      resp=blocks.blocks[low][4]+","+blocks.blocks[low][5]+","+location[blocks.blocks[low][1]][1].replace(/\W/g, '')+",";
-      resp=resp+alfa2num[location[blocks.blocks[low][1]][1].replace(/\W/g, '')]+",";
-      resp=resp+location[blocks.blocks[low][1]][2].replace(/\W/g, '')+",";
-      resp=resp+location[blocks.blocks[low][1]][3].replace(/\W/g, '')+",";
+      resp=blocks.blocks[low][4]+","+blocks.blocks[low][5]+",";
+      if (location[blocks.blocks[low][1]]!=null){
+        resp=resp+location[blocks.blocks[low][1]][1].replace(/\W/g, '')+",";
+        resp=resp+alfa2num[location[blocks.blocks[low][1]][1].replace(/\W/g, '')]+",";
+        resp=resp+location[blocks.blocks[low][1]][2].replace(/\W/g, '')+",";
+        resp=resp+location[blocks.blocks[low][1]][3].replace(/\W/g, '')+",";
+      } else {
+        resp=resp+',,,,';
+      }
     }
     response.writeHeader(200, {'Content-Type': 'text/plain','Content-Length': resp.length });
     response.end(resp);
