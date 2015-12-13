@@ -29,37 +29,47 @@ var http = require('http'),
     resp={};
 // set DNS to Google
 dns.setServers(["8.8.8.8","8.8.4.4"]);
+
+function checkIsIPV4(entry) {
+  var blocks = entry.split(".");
+  if(blocks.length === 4) {
+    return blocks.every(function(block) {
+      return parseInt(block,10) >=0 && parseInt(block,10) <= 255;
+    });
+  }
+  return false;
+}
+
 http.createServer(function(request, response) {
   addr = url.parse(request.url).path.replace("/geoip?","");
-  address=addr.split(".");
-  ipnum=16777216*parseInt(address[0])+65536*parseInt(address[1])+256*parseInt(address[2])+parseInt(address[3]);
-  low=0;
-  high=blocks.blocks.length;
-  i=Math.round((high+low)/2);
-  resp="";
-  if (isNaN(ipnum)){
-    resp="error";
-  }else{
-    while ((high - low) > 1) {
-      i=Math.round((high+low)/2);
-      // console.log(high+' '+low+'  '+ipnum+' '+blocks.blocks[i][0]);
-      if (blocks.blocks[i][0] <= ipnum) {
-        low=i;
-      } else if (blocks.blocks[i][0] > ipnum) {
-         high=i;
+  if (checkIsIPV4(addr)){
+    address=addr.split(".");
+    ipnum=16777216*parseInt(address[0])+65536*parseInt(address[1])+256*parseInt(address[2])+parseInt(address[3]);
+    low=0;
+    high=blocks.blocks.length;
+    i=Math.round((high+low)/2);
+    resp="";
+    if (isNaN(ipnum)){
+      resp="error";
+    }else{
+      while ((high - low) > 1) {
+        i=Math.round((high+low)/2);
+        if (blocks.blocks[i][0] <= ipnum) {
+          low=i;
+        } else if (blocks.blocks[i][0] > ipnum) {
+          high=i;
+        }
       }
+      resp=blocks.blocks[low][4]+","+blocks.blocks[low][5]+","+location[blocks.blocks[low][1]][1].replace(/\W/g, '')+",";
+      resp=resp+alfa2num[location[blocks.blocks[low][1]][1].replace(/\W/g, '')]+",";
+      resp=resp+location[blocks.blocks[low][1]][2].replace(/\W/g, '')+",";
+      resp=resp+location[blocks.blocks[low][1]][3].replace(/\W/g, '')+",";
     }
-//    resp=addr+","+blocks.blocks[low][4]+","+blocks.blocks[low][5]+","+location[blocks.blocks[low][1]][1].replace(/\W/g, '')+",";
-    resp=blocks.blocks[low][4]+","+blocks.blocks[low][5]+","+location[blocks.blocks[low][1]][1].replace(/\W/g, '')+",";
-    resp=resp+alfa2num[location[blocks.blocks[low][1]][1].replace(/\W/g, '')]+",";
-    resp=resp+location[blocks.blocks[low][1]][2].replace(/\W/g, '')+",";
-    resp=resp+location[blocks.blocks[low][1]][3].replace(/\W/g, '')+",";
-  }
-//  dns.reverse(addr, function (erno, domains) {
-//    if (erno) resp=resp+'REVERSE LOOKUP FAILED'; else {
-//      resp=resp+domains[0];
-//    }
     response.writeHeader(200, {'Content-Type': 'text/plain','Content-Length': resp.length });
     response.end(resp);
-//  })
+  } else { 
+    resp="error";
+    response.writeHeader(200, {'Content-Type': 'text/plain','Content-Length': resp.length });
+    response.end(resp);
+  }
 }).listen(port);
